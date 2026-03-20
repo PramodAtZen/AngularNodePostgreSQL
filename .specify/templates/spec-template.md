@@ -90,6 +90,24 @@
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
 
+### User Experience Consistency Requirements *(mandatory)*
+
+- **UX-001**: System MUST define consistent navigation and interaction patterns
+  for this feature.
+- **UX-002**: System MUST define validation, loading, empty, and error states
+  with expected user-visible behavior.
+- **UX-003**: System MUST define accessibility expectations relevant to the
+  feature (for example keyboard flow, labels, focus behavior, contrast).
+
+### Performance Requirements *(mandatory)*
+
+- **PRF-001**: System MUST define measurable performance targets for critical
+  user journeys (for example p95 response time, render time, throughput).
+- **PRF-002**: System MUST define how performance will be validated (test,
+  benchmark, or production-like measurement approach).
+- **PRF-003**: System MUST define acceptable degradation thresholds or limits
+  under expected load.
+
 *Example of marking unclear requirements:*
 
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
@@ -113,3 +131,7 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+- **SC-005**: [UX consistency metric, e.g., "100% of primary flows implement
+  defined loading/error/empty states"]
+- **SC-006**: [Performance budget metric, e.g., "p95 API latency remains below
+  300ms at expected peak load"]

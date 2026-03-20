@@ -1,50 +1,98 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: template -> 1.0.0
+- Modified principles:
+	- Template Principle 1 -> I. Code Quality Is Non-Negotiable
+	- Template Principle 2 -> II. Tests Define Done
+	- Template Principle 3 -> III. User Experience Consistency
+	- Template Principle 4 -> IV. Performance Budgets Are Required
+	- Template Principle 5 -> V. Simplicity, Security, and Maintainability
+- Added sections:
+	- Engineering Standards
+	- Delivery Workflow & Quality Gates
+- Removed sections:
+	- None
+- Templates requiring updates:
+	- ✅ updated: .specify/templates/plan-template.md
+	- ✅ updated: .specify/templates/spec-template.md
+	- ✅ updated: .specify/templates/tasks-template.md
+	- ✅ no action needed: .specify/templates/commands/*.md (directory not present)
+- Deferred items:
+	- None
+-->
+
+# AngularNodePostgreSQL Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Code Quality Is Non-Negotiable
+All production code MUST pass linting and formatting checks before merge, and
+MUST be reviewed for readability, naming clarity, and maintainability. Pull
+requests MUST avoid speculative abstractions and MUST include explicit
+justification for any increase in architectural complexity. Rationale: quality
+and clarity reduce defect rate and long-term maintenance cost.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Tests Define Done
+Every functional change MUST include automated tests aligned to risk: unit
+tests for behavior, integration tests for boundaries, and contract/API tests
+for externally consumed interfaces. New behavior is not complete until tests are
+added, failing first when applicable, and passing in CI. Rationale: test-backed
+delivery is the project's primary guardrail against regressions.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. User Experience Consistency
+User-facing changes MUST follow consistent interaction patterns for navigation,
+validation messaging, loading/empty/error states, and accessibility semantics.
+Each feature spec MUST define acceptance criteria for UX behavior across success
+and failure paths. Rationale: predictable UX increases usability and lowers
+support burden.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Performance Budgets Are Required
+Each feature MUST define measurable performance targets relevant to the user
+journey (for example p95 latency, rendering responsiveness, and query timing),
+and implementation MUST include validation steps to confirm those targets.
+Changes that risk regressions MUST include mitigation and monitoring notes.
+Rationale: explicit budgets prevent gradual degradation and preserve user trust.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Simplicity, Security, and Maintainability
+Designs MUST prefer the simplest approach that satisfies requirements while
+preserving security fundamentals: input validation, least-privilege access, and
+safe error handling. Reuse existing patterns before introducing new frameworks
+or libraries. Rationale: simpler secure systems are easier to reason about,
+operate, and evolve.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Engineering Standards
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Technology choices MUST be documented in plan artifacts when they materially
+	affect delivery risk, performance, or security.
+- Definitions of done MUST include: code quality checks, required test evidence,
+	UX acceptance validation, and performance validation results.
+- Requirements and tasks MUST remain traceable to user stories and measurable
+	outcomes.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Delivery Workflow & Quality Gates
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- `/speckit.specify` outputs MUST include testable scenarios plus explicit UX and
+	performance expectations.
+- `/speckit.plan` MUST fail Constitution Check if any principle lacks a
+	corresponding implementation or validation gate.
+- `/speckit.tasks` MUST generate test, UX validation, and performance validation
+	tasks for each in-scope story or cross-cutting phase as applicable.
+- `/speckit.implement` execution MUST not mark work complete until all
+	constitution-mandated validations pass.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution is the highest-priority project governance artifact for
+delivery practices in this repository.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+- Amendment process: changes MUST be proposed in writing, reviewed by project
+	maintainers, and merged with an accompanying Sync Impact Report.
+- Versioning policy: use semantic versioning for this document.
+	- MAJOR: incompatible principle removal or redefinition.
+	- MINOR: new principle or materially expanded mandatory guidance.
+	- PATCH: wording clarifications and non-semantic refinements.
+- Compliance review: every planning and implementation cycle MUST include an
+	explicit constitution compliance check, and unresolved violations MUST be
+	tracked before release.
+
+**Version**: 1.0.0 | **Ratified**: 2026-03-20 | **Last Amended**: 2026-03-20

@@ -31,7 +31,16 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- Code Quality Gate: Identify linting, formatting, code review criteria, and
+  complexity-control approach for the feature.
+- Testing Gate: Define required automated tests (unit/integration/contract as
+  applicable), including failing-first strategy where feasible.
+- UX Consistency Gate: Document interaction patterns, validation behavior,
+  loading/empty/error states, and accessibility expectations.
+- Performance Gate: Define measurable targets (for example latency,
+  responsiveness, throughput) and validation method.
+- Simplicity and Security Gate: Justify architecture choices, input validation,
+  authorization model, and error-handling strategy.
 
 ## Project Structure
 
