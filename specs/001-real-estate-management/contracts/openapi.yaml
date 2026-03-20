@@ -1,0 +1,496 @@
+openapi: 3.0.3
+info:
+  title: Real Estate Management API
+  version: 1.0.0
+  description: Contract for property onboarding, approvals, listing discovery, leads, and analytics.
+servers:
+  - url: https://api.example.com
+security:
+  - bearerAuth: []
+paths:
+  /users:
+    post:
+      summary: Create user
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{userId}:
+    get:
+      summary: Get user by id
+      tags: [Users]
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /properties:
+    post:
+      summary: Create property draft
+      tags: [Properties]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePropertyRequest'
+      responses:
+        '201':
+          description: Property draft created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+    get:
+      summary: List properties for current role scope
+      tags: [Properties]
+      responses:
+        '200':
+          description: Property list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Property'
+
+  /properties/{propertyId}:
+    get:
+      summary: Get property by id
+      tags: [Properties]
+      parameters:
+        - $ref: '#/components/parameters/PropertyId'
+      responses:
+        '200':
+          description: Property details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+    patch:
+      summary: Update property draft or requested changes
+      tags: [Properties]
+      parameters:
+        - $ref: '#/components/parameters/PropertyId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePropertyRequest'
+      responses:
+        '200':
+          description: Property updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+
+  /properties/{propertyId}/submit:
+    post:
+      summary: Submit property for approval
+      tags: [Approvals]
+      parameters:
+        - $ref: '#/components/parameters/PropertyId'
+      responses:
+        '202':
+          description: Property moved to pending approval
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+
+  /properties/{propertyId}/approve:
+    post:
+      summary: Approve property at current approval stage
+      tags: [Approvals]
+      parameters:
+        - $ref: '#/components/parameters/PropertyId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Approval accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+        '403':
+          description: Forbidden (includes self-approval denial)
+
+  /properties/{propertyId}/request-changes:
+    post:
+      summary: Request changes for submitted property
+      tags: [Approvals]
+      parameters:
+        - $ref: '#/components/parameters/PropertyId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [comment]
+              properties:
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Changes requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+
+  /properties/{propertyId}/status:
+    patch:
+      summary: Transition published property to sold or archived
+      tags: [Properties]
+      parameters:
+        - $ref: '#/components/parameters/PropertyId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [SOLD, ARCHIVED]
+      responses:
+        '200':
+          description: Property status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+
+  /search:
+    get:
+      summary: Search published listings
+      tags: [Search]
+      security: []
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+        - in: query
+          name: city
+          schema:
+            type: string
+        - in: query
+          name: minPrice
+          schema:
+            type: number
+        - in: query
+          name: maxPrice
+          schema:
+            type: number
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PropertySearchResult'
+                  total:
+                    type: integer
+
+  /search/autocomplete:
+    get:
+      summary: Get autocomplete suggestions
+      tags: [Search]
+      security: []
+      parameters:
+        - in: query
+          name: term
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Suggestions list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  suggestions:
+                    type: array
+                    items:
+                      type: string
+
+  /properties/{propertyId}/leads:
+    post:
+      summary: Create inquiry lead for published property
+      tags: [Leads]
+      parameters:
+        - $ref: '#/components/parameters/PropertyId'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLeadRequest'
+      responses:
+        '201':
+          description: Lead created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+
+  /analytics/listings:
+    get:
+      summary: Get listing analytics for authorized dashboard views
+      tags: [Analytics]
+      parameters:
+        - in: query
+          name: ownerId
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Aggregated listing metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ListingAnalytics'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    UserId:
+      in: path
+      name: userId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    PropertyId:
+      in: path
+      name: propertyId
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    User:
+      type: object
+      required: [id, email, fullName, role]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        fullName:
+          type: string
+        role:
+          type: string
+          enum: [AGENT_VENDOR, ADMIN_MANAGER, END_USER_BUYER, SYSTEM_ADMIN]
+
+    CreateUserRequest:
+      type: object
+      required: [email, password, fullName, role]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        fullName:
+          type: string
+        role:
+          type: string
+          enum: [AGENT_VENDOR, ADMIN_MANAGER, END_USER_BUYER, SYSTEM_ADMIN]
+
+    Property:
+      type: object
+      required: [id, ownerUserId, title, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        ownerUserId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        amenities:
+          type: object
+          additionalProperties: true
+        status:
+          type: string
+          enum: [DRAFT, PENDING_APPROVAL, CHANGES_REQUESTED, PUBLISHED, SOLD, ARCHIVED]
+
+    CreatePropertyRequest:
+      type: object
+      required: [title, description, price, location]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        amenities:
+          type: object
+          additionalProperties: true
+        location:
+          type: object
+          required: [city, state, country, addressLine, postalCode]
+          properties:
+            city:
+              type: string
+            state:
+              type: string
+            country:
+              type: string
+            addressLine:
+              type: string
+            postalCode:
+              type: string
+
+    UpdatePropertyRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        amenities:
+          type: object
+          additionalProperties: true
+
+    PropertySearchResult:
+      type: object
+      required: [id, title, price, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        price:
+          type: number
+        city:
+          type: string
+        status:
+          type: string
+          enum: [PUBLISHED]
+
+    CreateLeadRequest:
+      type: object
+      required: [buyerName, buyerEmail, message]
+      properties:
+        buyerName:
+          type: string
+        buyerEmail:
+          type: string
+          format: email
+        buyerPhone:
+          type: string
+        message:
+          type: string
+
+    Lead:
+      type: object
+      required: [id, propertyId, buyerName, buyerEmail, message, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        propertyId:
+          type: string
+          format: uuid
+        buyerName:
+          type: string
+        buyerEmail:
+          type: string
+          format: email
+        buyerPhone:
+          type: string
+        message:
+          type: string
+        status:
+          type: string
+          enum: [NEW, CONTACTED, QUALIFIED, CLOSED]
+
+    ListingAnalytics:
+      type: object
+      required: [propertyId, views, inquiries]
+      properties:
+        propertyId:
+          type: string
+          format: uuid
+        views:
+          type: integer
+        inquiries:
+          type: integer
+        lastUpdatedAt:
+          type: string
+          format: date-time
